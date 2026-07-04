@@ -7,17 +7,22 @@ fixtures/real/
 # Synthetic fixtures only — never place real feed files here
 !tests/fixtures/synthetic/*.txt
 
-# PHP / Composer
-/vendor/
+# Composer Related
 composer.lock
+/vendor
 
-# Tooling caches
-.phpunit.cache/
+# Caches
+.phpunit.cache
 .phpunit.result.cache
-.phpstan.cache/
-phpstan.neon.local
+/build
+/coverage
 
-# OS / IDE
+# Editors
+/.idea
+/.fleet
+/.vscode
 .DS_Store
-.idea/
-.vscode/
+
+# Local tool overrides
+phpunit.xml
+phpstan.neon

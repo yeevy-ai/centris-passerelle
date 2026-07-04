@@ -1,0 +1,59 @@
+{
+    "name": "yeevy/centris-passerelle",
+    "description": "Unofficial PHP client for the Centris® Passerelle FTP feed — parse, sync & reconcile Quebec MLS listings. Not affiliated with or endorsed by Centris or QFREB.",
+    "keywords": [
+        "yeevy",
+        "centris",
+        "passerelle",
+        "mls",
+        "real-estate",
+        "quebec",
+        "immobilier",
+        "ftp"
+    ],
+    "homepage": "https://github.com/yeevy-ai/centris-passerelle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oleg Hmelevschi",
+            "email": "info@digitalunity.ca",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-mbstring": "*",
+        "league/csv": "^9.16",
+        "psr/log": "^2.0 || ^3.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "pestphp/pest": "^3.0 || ^4.0",
+        "phpstan/phpstan": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yeevy\\CentrisPasserelle\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Yeevy\\CentrisPasserelle\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "analyse": "vendor/bin/phpstan analyse --no-progress",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
