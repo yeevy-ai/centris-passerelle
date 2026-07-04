@@ -59,6 +59,21 @@ foreach ($parser->parseFile('/chemin/vers/INSCRIPTIONS.TXT') as $listing) {
 
 L'analyse est paresseuse (générateur) : les instantanés volumineux ne saturent pas la mémoire. La conversion Windows-1252 → UTF-8 est appliquée automatiquement.
 
+Les fichiers secondaires ont chacun leur analyseur, joint aux inscriptions par numéro MLS :
+
+```php
+use Yeevy\CentrisPasserelle\Parser\RemarksParser;   // REMARQUES.TXT — descriptions FR/EN
+use Yeevy\CentrisPasserelle\Parser\PhotosParser;    // PHOTOS.TXT — photos ordonnées, URL media.ashx
+use Yeevy\CentrisPasserelle\Parser\AddendaParser;   // ADDENDA.TXT — addenda en segments à réassembler
+
+foreach ((new PhotosParser())->parseFile('/chemin/vers/PHOTOS.TXT') as $photo) {
+    $photo->mlsNumber;      // clé de jointure
+    $photo->sequence;       // ordre d'affichage
+    $photo->categoryCode;   // FACA = façade, CUI = cuisine, SDB = salle de bain…
+    $photo->url;            // https://mediaserver.centris.ca/media.ashx?id=…
+}
+```
+
 ### Positions de colonnes
 
 Les positions livrées avec le paquet sont **observées par la communauté** et peuvent varier selon la version de votre entente. Vérifiez-les contre la documentation PDF Passerelle fournie avec **votre** entente, puis surchargez-les au besoin :
@@ -119,7 +134,7 @@ new SnapshotValidator($columns, checks: [
 
 - Récupération FTP/SFTP (Flysystem) et pipeline de synchronisation complet
 - Réconciliation des retraits par différence d'instantanés
-- Analyseurs `REMARQUES.TXT`, `PHOTOS.TXT`, `ADDENDA.TXT` et fichiers de référence
+- Fichiers de référence (`MEMBRES`, `FIRMES`, `CARACTERISTIQUES`, …) et fichiers de détail (`DEPENSES`, `PIECES_UNITES`, `VISITES_LIBRES`, …)
 - Enveloppe Laravel : `yeevy/laravel-centris` (dépôt séparé)
 
 ### Gestion des versions
@@ -193,6 +208,21 @@ foreach ($parser->parseFile('/path/to/INSCRIPTIONS.TXT') as $listing) {
 
 Parsing is lazy (generator-based), so large snapshots don't exhaust memory. Windows-1252 → UTF-8 conversion is applied automatically.
 
+The secondary files each have their own parser, joined to listings by MLS number:
+
+```php
+use Yeevy\CentrisPasserelle\Parser\RemarksParser;   // REMARQUES.TXT — FR/EN descriptions
+use Yeevy\CentrisPasserelle\Parser\PhotosParser;    // PHOTOS.TXT — ordered photos, media.ashx URLs
+use Yeevy\CentrisPasserelle\Parser\AddendaParser;   // ADDENDA.TXT — chunked addenda to reassemble
+
+foreach ((new PhotosParser())->parseFile('/path/to/PHOTOS.TXT') as $photo) {
+    $photo->mlsNumber;      // join key
+    $photo->sequence;       // display order
+    $photo->categoryCode;   // FACA = façade, CUI = kitchen, SDB = bathroom…
+    $photo->url;            // https://mediaserver.centris.ca/media.ashx?id=…
+}
+```
+
 ### Column positions
 
 The positions shipped with the package are **community-observed** and may vary by agreement version. Verify them against the Passerelle PDF documentation that came with **your** agreement, then override as needed:
@@ -253,7 +283,7 @@ new SnapshotValidator($columns, checks: [
 
 - FTP/SFTP fetching (Flysystem) and full sync pipeline
 - Removal reconciliation by snapshot diffing
-- `REMARQUES.TXT`, `PHOTOS.TXT`, `ADDENDA.TXT` and reference-file parsers
+- Reference files (`MEMBRES`, `FIRMES`, `CARACTERISTIQUES`, …) and detail files (`DEPENSES`, `PIECES_UNITES`, `VISITES_LIBRES`, …)
 - Laravel wrapper: `yeevy/laravel-centris` (separate repo)
 
 ### Versioning
