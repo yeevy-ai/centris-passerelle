@@ -26,3 +26,6 @@ composer.lock
 # Local tool overrides
 phpunit.xml
 phpstan.neon
+
+# Claude Code local settings
+.claude/
