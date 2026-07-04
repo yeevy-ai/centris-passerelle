@@ -98,6 +98,15 @@ $validator = new SnapshotValidator($columns);
 $validator->validateFile('/chemin/vers/INSCRIPTIONS.TXT');
 ```
 
+Les vérifications sont injectables — ajoutez des invariants propres à votre entente ou assouplissez ceux par défaut :
+
+```php
+new SnapshotValidator($columns, checks: [
+    ...SnapshotValidator::defaultChecks(),
+    fn (array $row, ColumnMap $columns): ?string => /* votre invariant */ null,
+]);
+```
+
 ### Cycle de vie des inscriptions
 
 | Signal | Interprétation |
@@ -221,6 +230,15 @@ $validator = new SnapshotValidator($columns);
 // structure no longer lines up with the map, or when the snapshot is
 // empty (which would unpublish every listing).
 $validator->validateFile('/path/to/INSCRIPTIONS.TXT');
+```
+
+Checks are injectable — add per-agreement invariants or relax the defaults:
+
+```php
+new SnapshotValidator($columns, checks: [
+    ...SnapshotValidator::defaultChecks(),
+    fn (array $row, ColumnMap $columns): ?string => /* your invariant */ null,
+]);
 ```
 
 ### Listing lifecycle

@@ -16,6 +16,11 @@ use Yeevy\CentrisPasserelle\Support\FeedReader;
  * lines up with the file. A feed structure change raises no error by
  * itself — it shows up as shifted, garbage data. This guard turns that
  * silent failure into a loud one before anything is imported.
+ *
+ * Checks are injectable — add per-agreement invariants or relax the
+ * defaults: new SnapshotValidator(checks: [...SnapshotValidator::defaultChecks(), $custom]).
+ * Each check receives the raw row and the column map, and returns a
+ * failure reason or null.
  */
 final class SnapshotValidator
 {
@@ -23,14 +28,24 @@ final class SnapshotValidator
 
     private readonly LoggerInterface $logger;
 
+    /**
+     * @var list<callable(array<int, string|null>, ColumnMap): ?string>
+     */
+    private readonly array $checks;
+
+    /**
+     * @param  list<callable(array<int, string|null>, ColumnMap): ?string>|null  $checks
+     */
     public function __construct(
         ?ColumnMap $columns = null,
         private readonly int $sampleSize = 50,
         private readonly float $failureThreshold = 0.5,
         ?LoggerInterface $logger = null,
+        ?array $checks = null,
     ) {
         $this->columns = $columns ?? ColumnMap::listings();
         $this->logger = $logger ?? new NullLogger;
+        $this->checks = $checks ?? self::defaultChecks();
     }
 
     /**
@@ -111,9 +126,6 @@ final class SnapshotValidator
     }
 
     /**
-     * Invariants that hold for every well-mapped row. Optional fields
-     * are only checked when present, so sparse rows pass.
-     *
      * @param  array<int, string|null>  $row
      * @return list<string>
      */
@@ -121,36 +133,91 @@ final class SnapshotValidator
     {
         $reasons = [];
 
-        $mls = $this->columns->value($row, 'mls_number');
+        foreach ($this->checks as $check) {
+            $reason = $check($row, $this->columns);
 
-        if ($mls === null || ! ctype_digit($mls)) {
-            $reasons[] = 'mls_number is not numeric';
-        }
-
-        $status = $this->columns->value($row, 'status_code');
-
-        if ($status !== null && preg_match('/^[A-Z]{1,3}$/', $status) !== 1) {
-            $reasons[] = 'status_code is not an uppercase code';
-        }
-
-        $listingDate = $this->columns->value($row, 'listing_date');
-
-        if ($listingDate !== null && preg_match('#^\d{4}/\d{2}/\d{2}$#', $listingDate) !== 1) {
-            $reasons[] = 'listing_date is not YYYY/MM/DD';
-        }
-
-        $latitude = $this->columns->value($row, 'latitude');
-
-        if ($latitude !== null && (! is_numeric($latitude) || (float) $latitude < 40.0 || (float) $latitude > 65.0)) {
-            $reasons[] = 'latitude outside the Quebec range';
-        }
-
-        $longitude = $this->columns->value($row, 'longitude');
-
-        if ($longitude !== null && (! is_numeric($longitude) || (float) $longitude < -85.0 || (float) $longitude > -55.0)) {
-            $reasons[] = 'longitude outside the Quebec range';
+            if ($reason !== null) {
+                $reasons[] = $reason;
+            }
         }
 
         return $reasons;
+    }
+
+    /**
+     * Invariants that hold for every well-mapped row. Optional fields
+     * are only checked when present, so sparse rows pass.
+     *
+     * @return list<callable(array<int, string|null>, ColumnMap): ?string>
+     */
+    public static function defaultChecks(): array
+    {
+        return [
+            self::mlsNumberIsNumeric(...),
+            self::statusCodeLooksLikeACode(...),
+            self::listingDateIsWellFormed(...),
+            self::latitudeIsInQuebec(...),
+            self::longitudeIsInQuebec(...),
+        ];
+    }
+
+    /**
+     * @param  array<int, string|null>  $row
+     */
+    private static function mlsNumberIsNumeric(array $row, ColumnMap $columns): ?string
+    {
+        $mls = $columns->value($row, 'mls_number');
+
+        return $mls === null || ! ctype_digit($mls)
+            ? 'mls_number is not numeric'
+            : null;
+    }
+
+    /**
+     * @param  array<int, string|null>  $row
+     */
+    private static function statusCodeLooksLikeACode(array $row, ColumnMap $columns): ?string
+    {
+        $status = $columns->value($row, 'status_code');
+
+        return $status !== null && preg_match('/^[A-Z]{1,3}$/', $status) !== 1
+            ? 'status_code is not an uppercase code'
+            : null;
+    }
+
+    /**
+     * @param  array<int, string|null>  $row
+     */
+    private static function listingDateIsWellFormed(array $row, ColumnMap $columns): ?string
+    {
+        $listingDate = $columns->value($row, 'listing_date');
+
+        return $listingDate !== null && preg_match('#^\d{4}/\d{2}/\d{2}$#', $listingDate) !== 1
+            ? 'listing_date is not YYYY/MM/DD'
+            : null;
+    }
+
+    /**
+     * @param  array<int, string|null>  $row
+     */
+    private static function latitudeIsInQuebec(array $row, ColumnMap $columns): ?string
+    {
+        $latitude = $columns->value($row, 'latitude');
+
+        return $latitude !== null && (! is_numeric($latitude) || (float) $latitude < 40.0 || (float) $latitude > 65.0)
+            ? 'latitude outside the Quebec range'
+            : null;
+    }
+
+    /**
+     * @param  array<int, string|null>  $row
+     */
+    private static function longitudeIsInQuebec(array $row, ColumnMap $columns): ?string
+    {
+        $longitude = $columns->value($row, 'longitude');
+
+        return $longitude !== null && (! is_numeric($longitude) || (float) $longitude < -85.0 || (float) $longitude > -55.0)
+            ? 'longitude outside the Quebec range'
+            : null;
     }
 }

@@ -66,6 +66,27 @@ it('logs each mismatched row', function () {
         ->and($logger->messages[0])->toContain('warning');
 });
 
+it('accepts custom checks on top of the defaults', function () {
+    $noTestListings = function (array $row, ColumnMap $columns): ?string {
+        return $columns->value($row, 'mls_number') === '9999999'
+            ? 'mls_number is a test listing'
+            : null;
+    };
+
+    (new SnapshotValidator(checks: [...SnapshotValidator::defaultChecks(), $noTestListings]))
+        ->validateFile(__DIR__.'/fixtures/synthetic/listings.txt');
+})->throws(ColumnMapMismatch::class, 'mls_number is a test listing');
+
+it('can replace the default checks entirely', function () {
+    // A map that fails every default check passes when no checks run.
+    $shifted = ColumnMap::listings()->with(['mls_number' => 27]);
+
+    (new SnapshotValidator($shifted, checks: []))
+        ->validateFile(__DIR__.'/fixtures/synthetic/listings.txt');
+
+    expect(true)->toBeTrue();
+});
+
 it('checks optional fields only when present', function () {
     $bad = ColumnMap::listings()->with([
         'latitude' => 27,       // street name — not numeric
