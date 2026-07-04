@@ -21,18 +21,47 @@ final class ColumnMap
     public function __construct(private readonly array $map) {}
 
     /**
-     * Shipped listings map. Pass a profile name to load an alternative
-     * layout (config/listings-{profile}.php) when Centris introduces a
-     * new agreement version — old profiles keep working forever instead
-     * of being overwritten.
+     * Shipped listings map (INSCRIPTIONS.TXT). Pass a profile name to
+     * load an alternative layout (config/listings-{profile}.php) when
+     * Centris introduces a new agreement version — old profiles keep
+     * working forever instead of being overwritten.
      */
     public static function listings(?string $profile = null): self
+    {
+        return self::shipped('listings', $profile);
+    }
+
+    /**
+     * Shipped remarks map (REMARQUES.TXT).
+     */
+    public static function remarks(?string $profile = null): self
+    {
+        return self::shipped('remarks', $profile);
+    }
+
+    /**
+     * Shipped addenda map (ADDENDA.TXT).
+     */
+    public static function addenda(?string $profile = null): self
+    {
+        return self::shipped('addenda', $profile);
+    }
+
+    /**
+     * Shipped photos map (PHOTOS.TXT).
+     */
+    public static function photos(?string $profile = null): self
+    {
+        return self::shipped('photos', $profile);
+    }
+
+    private static function shipped(string $name, ?string $profile): self
     {
         if ($profile !== null && preg_match('/^[A-Za-z0-9_-]+$/', $profile) !== 1) {
             throw new InvalidArgumentException("Invalid column map profile name: {$profile}");
         }
 
-        $file = $profile === null ? 'listings.php' : "listings-{$profile}.php";
+        $file = $profile === null ? "{$name}.php" : "{$name}-{$profile}.php";
 
         return self::fromFile(dirname(__DIR__, 2).'/config/'.$file);
     }

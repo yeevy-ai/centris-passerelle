@@ -39,6 +39,12 @@ it('rejects invalid map files', function () {
     ColumnMap::fromFile('/nonexistent/map.php');
 })->throws(InvalidArgumentException::class);
 
+it('loads the shipped secondary-file maps', function () {
+    expect(ColumnMap::remarks()->position('text'))->toBe(6)
+        ->and(ColumnMap::addenda()->position('part_number'))->toBe(3)
+        ->and(ColumnMap::photos()->position('url'))->toBe(6);
+});
+
 it('rejects unknown listings profiles', function () {
     ColumnMap::listings('2099');
 })->throws(InvalidArgumentException::class, 'not found');
