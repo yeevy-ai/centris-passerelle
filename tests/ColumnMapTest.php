@@ -42,7 +42,17 @@ it('rejects invalid map files', function () {
 it('loads the shipped secondary-file maps', function () {
     expect(ColumnMap::remarks()->position('text'))->toBe(6)
         ->and(ColumnMap::addenda()->position('part_number'))->toBe(3)
-        ->and(ColumnMap::photos()->position('url'))->toBe(6);
+        ->and(ColumnMap::photos()->position('url'))->toBe(6)
+        ->and(ColumnMap::brokers()->position('email'))->toBe(11)
+        ->and(ColumnMap::firms()->position('name'))->toBe(1)
+        ->and(ColumnMap::offices()->position('postal_code'))->toBe(8)
+        ->and(ColumnMap::features()->position('feature_code'))->toBe(2)
+        ->and(ColumnMap::expenses()->position('amount'))->toBe(2)
+        ->and(ColumnMap::renovations()->position('year'))->toBe(3)
+        ->and(ColumnMap::additionalLinks()->position('url_fr'))->toBe(3)
+        ->and(ColumnMap::openHouses()->position('start_time'))->toBe(4)
+        ->and(ColumnMap::units()->position('bedrooms'))->toBe(4)
+        ->and(ColumnMap::rooms()->position('dimensions'))->toBe(9);
 });
 
 it('rejects unknown listings profiles', function () {

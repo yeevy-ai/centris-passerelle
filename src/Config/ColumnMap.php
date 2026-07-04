@@ -55,6 +55,86 @@ final class ColumnMap
         return self::shipped('photos', $profile);
     }
 
+    /**
+     * Shipped brokers map (MEMBRES.TXT).
+     */
+    public static function brokers(?string $profile = null): self
+    {
+        return self::shipped('brokers', $profile);
+    }
+
+    /**
+     * Shipped firms map (FIRMES.TXT).
+     */
+    public static function firms(?string $profile = null): self
+    {
+        return self::shipped('firms', $profile);
+    }
+
+    /**
+     * Shipped offices map (BUREAUX.TXT).
+     */
+    public static function offices(?string $profile = null): self
+    {
+        return self::shipped('offices', $profile);
+    }
+
+    /**
+     * Shipped features map (CARACTERISTIQUES.TXT).
+     */
+    public static function features(?string $profile = null): self
+    {
+        return self::shipped('features', $profile);
+    }
+
+    /**
+     * Shipped expenses map (DEPENSES.TXT).
+     */
+    public static function expenses(?string $profile = null): self
+    {
+        return self::shipped('expenses', $profile);
+    }
+
+    /**
+     * Shipped renovations map (RENOVATIONS.TXT).
+     */
+    public static function renovations(?string $profile = null): self
+    {
+        return self::shipped('renovations', $profile);
+    }
+
+    /**
+     * Shipped additional links map (LIENS_ADDITIONNELS.TXT).
+     */
+    public static function additionalLinks(?string $profile = null): self
+    {
+        return self::shipped('additional-links', $profile);
+    }
+
+    /**
+     * Shipped open houses map (VISITES_LIBRES.TXT).
+     */
+    public static function openHouses(?string $profile = null): self
+    {
+        return self::shipped('open-houses', $profile);
+    }
+
+    /**
+     * Shipped detailed units map (UNITES_DETAILLEES.TXT).
+     */
+    public static function units(?string $profile = null): self
+    {
+        return self::shipped('units', $profile);
+    }
+
+    /**
+     * Shipped rooms map (PIECES_UNITES.TXT).
+     */
+    public static function rooms(?string $profile = null): self
+    {
+        return self::shipped('rooms', $profile);
+    }
+
     private static function shipped(string $name, ?string $profile): self
     {
         if ($profile !== null && preg_match('/^[A-Za-z0-9_-]+$/', $profile) !== 1) {
