@@ -1,0 +1,2 @@
+"9999999",1,1,"SAL",,,"RC",,,"15.6x12.2 P",,"BOIS",,,,"foyer au bois","wood fireplace"
+"9999999",1,2,"CH","Chambre des maîtres","Primary bedroom","2",,,"14.0x12.0 P",,"TAP","moquette","carpet",,,
