@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Yeevy\CentrisPasserelle\Config\ColumnMap;
 use Yeevy\CentrisPasserelle\Enums\ListingStatus;
 use Yeevy\CentrisPasserelle\Support\Cast;
+use Yeevy\CentrisPasserelle\Support\RowHash;
 
 /**
  * One row of the listings master file (INSCRIPTIONS.TXT), typed.
@@ -121,21 +122,8 @@ final readonly class ListingRecord
             longitude: Cast::toFloat($columns->value($row, 'longitude')),
             descriptionFr: $columns->value($row, 'description_fr'),
             descriptionEn: $columns->value($row, 'description_en'),
-            dirtyHash: self::hashRow($row),
+            dirtyHash: RowHash::of($row),
             row: $row,
         );
-    }
-
-    /**
-     * Stable hash of the raw row, used to skip unchanged records on upsert.
-     *
-     * @param  array<int, string|null>  $row
-     */
-    public static function hashRow(array $row): string
-    {
-        return hash('sha256', implode("\x1F", array_map(
-            static fn (?string $value): string => $value ?? '',
-            $row,
-        )));
     }
 }
