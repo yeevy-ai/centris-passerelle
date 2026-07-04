@@ -1,0 +1,2 @@
+"9999999","TAXMUN",5443,2026,,"A","DEPGEN",,
+"9999999","ENER",2510,,,"A","DEPGEN","Électricité","Electricity"
