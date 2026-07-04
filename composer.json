@@ -23,7 +23,7 @@
     "require": {
         "php": "^8.2",
         "ext-mbstring": "*",
-        "league/csv": "^9.16",
+        "league/csv": "^9.27",
         "psr/log": "^2.0 || ^3.0"
     },
     "require-dev": {
