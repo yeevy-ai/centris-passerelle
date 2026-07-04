@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Yeevy\CentrisPasserelle\Validation;
 
-use League\Csv\CharsetConverter;
 use League\Csv\Reader;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Yeevy\CentrisPasserelle\Config\ColumnMap;
 use Yeevy\CentrisPasserelle\Exceptions\ColumnMapMismatch;
+use Yeevy\CentrisPasserelle\Support\FeedReader;
 
 /**
  * Samples rows from a snapshot and checks that the column map still
@@ -38,7 +38,7 @@ final class SnapshotValidator
      */
     public function validateFile(string $path): void
     {
-        $this->validate(Reader::from($path, 'r'));
+        $this->validate(FeedReader::fromFile($path));
     }
 
     /**
@@ -48,7 +48,7 @@ final class SnapshotValidator
      */
     public function validateString(string $contents): void
     {
-        $this->validate(Reader::fromString($contents));
+        $this->validate(FeedReader::fromString($contents));
     }
 
     /**
@@ -58,8 +58,6 @@ final class SnapshotValidator
      */
     private function validate(Reader $reader): void
     {
-        CharsetConverter::addTo($reader, 'windows-1252', 'utf-8');
-
         $sampled = 0;
         $failed = 0;
         $reasons = [];

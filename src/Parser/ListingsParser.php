@@ -6,12 +6,12 @@ namespace Yeevy\CentrisPasserelle\Parser;
 
 use Generator;
 use InvalidArgumentException;
-use League\Csv\CharsetConverter;
 use League\Csv\Reader;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Yeevy\CentrisPasserelle\Config\ColumnMap;
 use Yeevy\CentrisPasserelle\Dto\ListingRecord;
+use Yeevy\CentrisPasserelle\Support\FeedReader;
 
 /**
  * Streams the listings master file (INSCRIPTIONS.TXT) into ListingRecord
@@ -37,7 +37,7 @@ final class ListingsParser
      */
     public function parseFile(string $path): Generator
     {
-        return $this->records(Reader::from($path, 'r'));
+        return $this->records(FeedReader::fromFile($path));
     }
 
     /**
@@ -47,7 +47,7 @@ final class ListingsParser
      */
     public function parseString(string $contents): Generator
     {
-        return $this->records(Reader::fromString($contents));
+        return $this->records(FeedReader::fromString($contents));
     }
 
     /**
@@ -56,8 +56,6 @@ final class ListingsParser
      */
     private function records(Reader $reader): Generator
     {
-        CharsetConverter::addTo($reader, 'windows-1252', 'utf-8');
-
         foreach ($reader->getRecords() as $line => $row) {
             try {
                 yield ListingRecord::fromRow($row, $this->columns);

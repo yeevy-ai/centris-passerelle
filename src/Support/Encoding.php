@@ -10,8 +10,13 @@ namespace Yeevy\CentrisPasserelle\Support;
  */
 final class Encoding
 {
+    /**
+     * The encoding Centris delivers every feed file in.
+     */
+    public const FEED = 'Windows-1252';
+
     public static function toUtf8(string $content): string
     {
-        return mb_convert_encoding($content, 'UTF-8', 'Windows-1252');
+        return mb_convert_encoding($content, 'UTF-8', self::FEED);
     }
 }
