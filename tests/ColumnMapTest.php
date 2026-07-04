@@ -38,3 +38,11 @@ it('merges overrides without touching other positions', function () {
 it('rejects invalid map files', function () {
     ColumnMap::fromFile('/nonexistent/map.php');
 })->throws(InvalidArgumentException::class);
+
+it('rejects unknown listings profiles', function () {
+    ColumnMap::listings('2099');
+})->throws(InvalidArgumentException::class, 'not found');
+
+it('rejects malformed profile names', function () {
+    ColumnMap::listings('../evil');
+})->throws(InvalidArgumentException::class, 'Invalid column map profile name');
