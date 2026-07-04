@@ -1,0 +1,23 @@
+# Local Claude instructions (kept out of the public repo)
+CLAUDE.md
+
+# Never commit real feed data (hard constraint)
+*.TXT
+fixtures/real/
+# Synthetic fixtures only — never place real feed files here
+!tests/fixtures/synthetic/*.txt
+
+# PHP / Composer
+/vendor/
+composer.lock
+
+# Tooling caches
+.phpunit.cache/
+.phpunit.result.cache
+.phpstan.cache/
+phpstan.neon.local
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
