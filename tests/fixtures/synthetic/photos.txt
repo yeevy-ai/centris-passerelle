@@ -1,0 +1,2 @@
+"9999999",1,,"FACA","Façade avant","Front façade","https://mediaserver.centris.ca/media.ashx?id=TEST0001","100000001","2026/01/20 10:00:00"
+"9999999",2,,"CUI","Cuisine rénovée","Renovated kitchen","https://mediaserver.centris.ca/media.ashx?id=TEST0002","100000002","2026/01/20 10:00:00"

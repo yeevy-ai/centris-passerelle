@@ -1,0 +1,2 @@
+"9999999",1,"F",1,,,"Propriété rénovée près de l'école et du fleuve."
+"9999999",2,"A",1,,,"Renovated property near the school and the river."

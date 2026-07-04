@@ -1,0 +1,4 @@
+"9999999",1,"F",1,,,"Bienvenue sur la Rue Exemple, à quelques pas du"
+"9999999",1,"F",2,,,"parc et de l'école primaire du quartier."
+"9999999",1,"A",1,,,"Welcome to Rue Exemple, steps away from the"
+"9999999",1,"A",2,,,"park and the neighbourhood elementary school."
