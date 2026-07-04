@@ -59,12 +59,26 @@ foreach ($parser->parseFile('/chemin/vers/INSCRIPTIONS.TXT') as $listing) {
 
 L'analyse est paresseuse (générateur) : les instantanés volumineux ne saturent pas la mémoire. La conversion Windows-1252 → UTF-8 est appliquée automatiquement.
 
-Les fichiers secondaires ont chacun leur analyseur, joint aux inscriptions par numéro MLS :
+Chaque fichier du dépôt a son analyseur. Les fichiers de détail se joignent aux inscriptions par numéro MLS ; les fichiers de référence par leurs propres codes :
+
+| Fichier | Analyseur | Contenu |
+|---|---|---|
+| `REMARQUES.TXT` | `RemarksParser` | Descriptions FR/EN |
+| `PHOTOS.TXT` | `PhotosParser` | Photos ordonnées, URL media.ashx |
+| `ADDENDA.TXT` | `AddendaParser` | Addenda en segments à réassembler |
+| `CARACTERISTIQUES.TXT` | `FeaturesParser` | Caractéristiques codées |
+| `DEPENSES.TXT` | `ExpensesParser` | Taxes et dépenses |
+| `RENOVATIONS.TXT` | `RenovationsParser` | Rénovations déclarées |
+| `LIENS_ADDITIONNELS.TXT` | `AdditionalLinksParser` | Visites virtuelles, vidéos |
+| `VISITES_LIBRES.TXT` | `OpenHousesParser` | Visites libres planifiées |
+| `UNITES_DETAILLEES.TXT` | `UnitsParser` | Unités (principale, logements, intergénération) |
+| `PIECES_UNITES.TXT` | `RoomsParser` | Pièces par unité (dimensions, revêtements) |
+| `MEMBRES.TXT` | `BrokersParser` | Courtiers (clé : code courtier) |
+| `FIRMES.TXT` | `FirmsParser` | Agences (clé : code firme) |
+| `BUREAUX.TXT` | `OfficesParser` | Bureaux (clé : code bureau) |
 
 ```php
-use Yeevy\CentrisPasserelle\Parser\RemarksParser;   // REMARQUES.TXT — descriptions FR/EN
-use Yeevy\CentrisPasserelle\Parser\PhotosParser;    // PHOTOS.TXT — photos ordonnées, URL media.ashx
-use Yeevy\CentrisPasserelle\Parser\AddendaParser;   // ADDENDA.TXT — addenda en segments à réassembler
+use Yeevy\CentrisPasserelle\Parser\PhotosParser;
 
 foreach ((new PhotosParser())->parseFile('/chemin/vers/PHOTOS.TXT') as $photo) {
     $photo->mlsNumber;      // clé de jointure
@@ -134,7 +148,6 @@ new SnapshotValidator($columns, checks: [
 
 - Récupération FTP/SFTP (Flysystem) et pipeline de synchronisation complet
 - Réconciliation des retraits par différence d'instantanés
-- Fichiers de référence (`MEMBRES`, `FIRMES`, `CARACTERISTIQUES`, …) et fichiers de détail (`DEPENSES`, `PIECES_UNITES`, `VISITES_LIBRES`, …)
 - Enveloppe Laravel : `yeevy/laravel-centris` (dépôt séparé)
 
 ### Gestion des versions
@@ -208,12 +221,26 @@ foreach ($parser->parseFile('/path/to/INSCRIPTIONS.TXT') as $listing) {
 
 Parsing is lazy (generator-based), so large snapshots don't exhaust memory. Windows-1252 → UTF-8 conversion is applied automatically.
 
-The secondary files each have their own parser, joined to listings by MLS number:
+Every file in the drop has its own parser. Detail files join to listings by MLS number; reference files by their own codes:
+
+| File | Parser | Content |
+|---|---|---|
+| `REMARQUES.TXT` | `RemarksParser` | FR/EN descriptions |
+| `PHOTOS.TXT` | `PhotosParser` | Ordered photos, media.ashx URLs |
+| `ADDENDA.TXT` | `AddendaParser` | Chunked addenda to reassemble |
+| `CARACTERISTIQUES.TXT` | `FeaturesParser` | Coded features |
+| `DEPENSES.TXT` | `ExpensesParser` | Taxes and expenses |
+| `RENOVATIONS.TXT` | `RenovationsParser` | Declared renovations |
+| `LIENS_ADDITIONNELS.TXT` | `AdditionalLinksParser` | Virtual tours, videos |
+| `VISITES_LIBRES.TXT` | `OpenHousesParser` | Scheduled open houses |
+| `UNITES_DETAILLEES.TXT` | `UnitsParser` | Units (main, rental, intergenerational) |
+| `PIECES_UNITES.TXT` | `RoomsParser` | Rooms per unit (dimensions, flooring) |
+| `MEMBRES.TXT` | `BrokersParser` | Brokers (key: broker code) |
+| `FIRMES.TXT` | `FirmsParser` | Firms (key: firm code) |
+| `BUREAUX.TXT` | `OfficesParser` | Offices (key: office code) |
 
 ```php
-use Yeevy\CentrisPasserelle\Parser\RemarksParser;   // REMARQUES.TXT — FR/EN descriptions
-use Yeevy\CentrisPasserelle\Parser\PhotosParser;    // PHOTOS.TXT — ordered photos, media.ashx URLs
-use Yeevy\CentrisPasserelle\Parser\AddendaParser;   // ADDENDA.TXT — chunked addenda to reassemble
+use Yeevy\CentrisPasserelle\Parser\PhotosParser;
 
 foreach ((new PhotosParser())->parseFile('/path/to/PHOTOS.TXT') as $photo) {
     $photo->mlsNumber;      // join key
@@ -283,7 +310,6 @@ new SnapshotValidator($columns, checks: [
 
 - FTP/SFTP fetching (Flysystem) and full sync pipeline
 - Removal reconciliation by snapshot diffing
-- Reference files (`MEMBRES`, `FIRMES`, `CARACTERISTIQUES`, …) and detail files (`DEPENSES`, `PIECES_UNITES`, `VISITES_LIBRES`, …)
 - Laravel wrapper: `yeevy/laravel-centris` (separate repo)
 
 ### Versioning
