@@ -7,6 +7,7 @@ namespace Yeevy\CentrisPasserelle\Dto;
 use DateTimeImmutable;
 use Yeevy\CentrisPasserelle\Config\ColumnMap;
 use Yeevy\CentrisPasserelle\Enums\ListingStatus;
+use Yeevy\CentrisPasserelle\Support\Cast;
 
 /**
  * One row of the listings master file (INSCRIPTIONS.TXT), typed.
@@ -82,8 +83,8 @@ final readonly class ListingRecord
             mlsNumber: $mlsNumber,
             brokerCode: $columns->value($row, 'broker_code'),
             firmCode: $columns->value($row, 'firm_code'),
-            salePrice: self::toInt($columns->value($row, 'sale_price')),
-            listingDate: self::toDate($columns->value($row, 'listing_date'), '!Y/m/d'),
+            salePrice: Cast::toInt($columns->value($row, 'sale_price')),
+            listingDate: Cast::toDate($columns->value($row, 'listing_date'), '!Y/m/d'),
             municipalityCode: $columns->value($row, 'municipality_code'),
             civicNumber: $columns->value($row, 'civic_number'),
             streetName: $columns->value($row, 'street_name'),
@@ -93,31 +94,31 @@ final readonly class ListingRecord
             genreCode: $columns->value($row, 'genre_code'),
             typeCode: $columns->value($row, 'type_code'),
             saleTypeCode: $columns->value($row, 'sale_type_code'),
-            yearBuilt: self::toInt($columns->value($row, 'year_built')),
-            lotFrontage: self::toFloat($columns->value($row, 'lot_frontage')),
-            lotDepth: self::toFloat($columns->value($row, 'lot_depth')),
+            yearBuilt: Cast::toInt($columns->value($row, 'year_built')),
+            lotFrontage: Cast::toFloat($columns->value($row, 'lot_frontage')),
+            lotDepth: Cast::toFloat($columns->value($row, 'lot_depth')),
             lotDimensionUnit: $columns->value($row, 'lot_dimension_unit'),
-            buildingFrontage: self::toFloat($columns->value($row, 'building_frontage')),
-            buildingDepth: self::toFloat($columns->value($row, 'building_depth')),
+            buildingFrontage: Cast::toFloat($columns->value($row, 'building_frontage')),
+            buildingDepth: Cast::toFloat($columns->value($row, 'building_depth')),
             buildingDimensionUnit: $columns->value($row, 'building_dimension_unit'),
-            livingArea: self::toFloat($columns->value($row, 'living_area')),
+            livingArea: Cast::toFloat($columns->value($row, 'living_area')),
             livingAreaUnit: $columns->value($row, 'living_area_unit'),
-            assessmentYear: self::toInt($columns->value($row, 'assessment_year')),
-            assessmentLand: self::toInt($columns->value($row, 'assessment_land')),
-            assessmentBuilding: self::toInt($columns->value($row, 'assessment_building')),
-            roomsTotal: self::toInt($columns->value($row, 'rooms_total')),
-            bedrooms: self::toInt($columns->value($row, 'bedrooms')),
-            bedroomsBasement: self::toInt($columns->value($row, 'bedrooms_basement')),
-            bathrooms: self::toInt($columns->value($row, 'bathrooms')),
-            powderRooms: self::toInt($columns->value($row, 'powder_rooms')),
+            assessmentYear: Cast::toInt($columns->value($row, 'assessment_year')),
+            assessmentLand: Cast::toInt($columns->value($row, 'assessment_land')),
+            assessmentBuilding: Cast::toInt($columns->value($row, 'assessment_building')),
+            roomsTotal: Cast::toInt($columns->value($row, 'rooms_total')),
+            bedrooms: Cast::toInt($columns->value($row, 'bedrooms')),
+            bedroomsBasement: Cast::toInt($columns->value($row, 'bedrooms_basement')),
+            bathrooms: Cast::toInt($columns->value($row, 'bathrooms')),
+            powderRooms: Cast::toInt($columns->value($row, 'powder_rooms')),
             inclusionsFr: $columns->value($row, 'inclusions_fr'),
             inclusionsEn: $columns->value($row, 'inclusions_en'),
-            modifiedAt: self::toDate($columns->value($row, 'modified_at'), '!Y/m/d H:i:s'),
+            modifiedAt: Cast::toDate($columns->value($row, 'modified_at'), '!Y/m/d H:i:s'),
             statusCode: $statusCode,
             status: $statusCode === null ? null : ListingStatus::tryFrom($statusCode),
             redirectUrl: $columns->value($row, 'redirect_url'),
-            latitude: self::toFloat($columns->value($row, 'latitude')),
-            longitude: self::toFloat($columns->value($row, 'longitude')),
+            latitude: Cast::toFloat($columns->value($row, 'latitude')),
+            longitude: Cast::toFloat($columns->value($row, 'longitude')),
             descriptionFr: $columns->value($row, 'description_fr'),
             descriptionEn: $columns->value($row, 'description_en'),
             dirtyHash: self::hashRow($row),
@@ -136,26 +137,5 @@ final readonly class ListingRecord
             static fn (?string $value): string => $value ?? '',
             $row,
         )));
-    }
-
-    private static function toInt(?string $value): ?int
-    {
-        return is_numeric($value) ? (int) $value : null;
-    }
-
-    private static function toFloat(?string $value): ?float
-    {
-        return is_numeric($value) ? (float) $value : null;
-    }
-
-    private static function toDate(?string $value, string $format): ?DateTimeImmutable
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        $date = DateTimeImmutable::createFromFormat($format, $value);
-
-        return $date === false ? null : $date;
     }
 }
