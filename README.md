@@ -80,6 +80,24 @@ Un logger PSR-3 peut être injecté ; les lignes sans numéro MLS sont journalis
 $parser = new ListingsParser(logger: $monLogger);
 ```
 
+Si Centris introduit une nouvelle disposition de colonnes, elle sera publiée comme **profil nommé** plutôt qu'en écrasant la carte par défaut : `ColumnMap::listings('2027')` chargera `config/listings-2027.php`, et les profils existants continueront de fonctionner.
+
+### Détection de dérive
+
+Un changement de structure du flux ne provoque aucune erreur par lui-même — il se manifeste par des données décalées importées silencieusement. Validez l'instantané avant l'import :
+
+```php
+use Yeevy\CentrisPasserelle\Validation\SnapshotValidator;
+
+$validator = new SnapshotValidator($columns);
+
+// Échantillonne les lignes et vérifie les invariants (numéro MLS numérique,
+// format des dates, coordonnées dans les bornes du Québec…).
+// Lève ColumnMapMismatch si la structure ne correspond plus à la carte,
+// ou si l'instantané est vide (ce qui dépublierait toutes les inscriptions).
+$validator->validateFile('/chemin/vers/INSCRIPTIONS.TXT');
+```
+
 ### Cycle de vie des inscriptions
 
 | Signal | Interprétation |
@@ -94,6 +112,14 @@ $parser = new ListingsParser(logger: $monLogger);
 - Réconciliation des retraits par différence d'instantanés
 - Analyseurs `REMARQUES.TXT`, `PHOTOS.TXT`, `ADDENDA.TXT` et fichiers de référence
 - Enveloppe Laravel : `yeevy/laravel-centris` (dépôt séparé)
+
+### Gestion des versions
+
+Le paquet suit [SemVer](https://semver.org/lang/fr/) via les étiquettes git.
+
+- **0.x** : les positions de colonnes sont observées par la communauté et l'API se stabilise — des ruptures peuvent survenir dans les versions mineures.
+- **À partir de 1.0** : correctifs = patch ; nouveaux champs et analyseurs = mineure ; changement d'API = majeure.
+- **Cartes de colonnes** : corriger une position par défaut est publié au minimum en version mineure avec une entrée de changelog explicite — le code compile mais les données changent. Une nouvelle disposition Centris devient un nouveau profil nommé, jamais un écrasement du profil existant.
 
 ### Tests
 
@@ -179,6 +205,24 @@ A PSR-3 logger can be injected; rows without an MLS number are logged and skippe
 $parser = new ListingsParser(logger: $myLogger);
 ```
 
+If Centris introduces a new column layout, it will ship as a **named profile** rather than overwriting the default map: `ColumnMap::listings('2027')` loads `config/listings-2027.php`, and existing profiles keep working.
+
+### Drift detection
+
+A feed structure change raises no error by itself — it shows up as shifted data imported silently. Validate the snapshot before importing:
+
+```php
+use Yeevy\CentrisPasserelle\Validation\SnapshotValidator;
+
+$validator = new SnapshotValidator($columns);
+
+// Samples rows and checks invariants (numeric MLS number, date format,
+// coordinates within Quebec bounds…). Throws ColumnMapMismatch when the
+// structure no longer lines up with the map, or when the snapshot is
+// empty (which would unpublish every listing).
+$validator->validateFile('/path/to/INSCRIPTIONS.TXT');
+```
+
 ### Listing lifecycle
 
 | Signal | Interpretation |
@@ -193,6 +237,14 @@ $parser = new ListingsParser(logger: $myLogger);
 - Removal reconciliation by snapshot diffing
 - `REMARQUES.TXT`, `PHOTOS.TXT`, `ADDENDA.TXT` and reference-file parsers
 - Laravel wrapper: `yeevy/laravel-centris` (separate repo)
+
+### Versioning
+
+The package follows [SemVer](https://semver.org) via git tags.
+
+- **0.x**: column positions are community-observed and the API is still settling — breaking changes may land in minor versions.
+- **From 1.0 on**: fixes = patch; new fields and parsers = minor; API changes = major.
+- **Column maps**: correcting a shipped default position is released as at least a minor version with an explicit changelog entry — code still compiles, but data shifts. A new Centris layout becomes a new named profile, never an overwrite of an existing one.
 
 ### Testing
 
