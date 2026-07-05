@@ -2,6 +2,21 @@
 
 All notable changes to `yeevy/centris-passerelle` will be documented in this file.
 
+## v0.2.0 — Sync engine - 2026-07-05
+
+### Highlights
+
+- **`ListingsSynchronizer`** — applies a full snapshot to consumer storage: drift validation first (nothing is written when it fails), dirty-hash upserts through the new `ListingRepository` contract, and removal reconciliation by diffing storage against the snapshot. Returns a `SyncResult` (created / updated / skipped / removed).
+- **`ListingRepository` contract** — storage stays consumer-owned (Eloquent, PDO, WordPress, …); the package never touches a database.
+- **PSR-14 lifecycle events** — `ListingCreated`, `ListingUpdated` (including EV→VE sold transitions), `ListingRemoved`.
+- **Feed sources** — `FeedSource` contract with `LocalDirectorySource` (drop folders, cron scripts) and `FlysystemFeedSource` for the Passerelle FTP account (pair with `league/flysystem-ftp` or `-sftp-v3`; flysystem is suggest-only).
+
+### New dependency
+
+`psr/event-dispatcher ^1.0` (interface only).
+
+No breaking changes — all v0.1.0 APIs are untouched.
+
 ## v0.1.0 — Initial release - 2026-07-05
 
 Unofficial PHP client for the Centris® Passerelle FTP feed. Not affiliated with or endorsed by Centris or QFREB. Requires a valid diffusion agreement.
