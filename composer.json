@@ -35,6 +35,7 @@
         "phpstan/phpstan": "^2.1"
     },
     "suggest": {
+        "ext-zip": "Required to use ZipExtractor for archived drops.",
         "league/flysystem": "Required to use FlysystemFeedSource (^3.0).",
         "league/flysystem-ftp": "FTP adapter for fetching the Passerelle drop with FlysystemFeedSource.",
         "league/flysystem-sftp-v3": "SFTP adapter for fetching the Passerelle drop with FlysystemFeedSource."
