@@ -45,7 +45,7 @@ use Yeevy\CentrisPasserelle\Enums\ListingStatus;
 $parser = new ListingsParser();
 
 foreach ($parser->parseFile('/chemin/vers/INSCRIPTIONS.TXT') as $listing) {
-    $listing->mlsNumber;      // « 9159788 » — clé d'upsert
+    $listing->mlsNumber;      // « 9999999 » — clé d'upsert
     $listing->salePrice;      // 975000 (null pour les locations)
     $listing->status;         // ListingStatus::Active | ListingStatus::Sold | null
     $listing->descriptionFr;  // contient du HTML <br/>
@@ -256,7 +256,7 @@ use Yeevy\CentrisPasserelle\Enums\ListingStatus;
 $parser = new ListingsParser();
 
 foreach ($parser->parseFile('/path/to/INSCRIPTIONS.TXT') as $listing) {
-    $listing->mlsNumber;      // "9159788" — upsert key
+    $listing->mlsNumber;      // "9999999" — upsert key
     $listing->salePrice;      // 975000 (null for rentals)
     $listing->status;         // ListingStatus::Active | ListingStatus::Sold | null
     $listing->descriptionFr;  // contains HTML <br/>
