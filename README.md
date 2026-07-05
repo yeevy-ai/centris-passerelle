@@ -144,11 +144,37 @@ new SnapshotValidator($columns, checks: [
 | `VE` (vendue) | Marquer vendue |
 | Absente de l'instantané | Dépublier (étape de réconciliation) |
 
+### Synchronisation
+
+Le moteur applique un instantané complet à votre stockage : validation de dérive d'abord (rien n'est écrit si elle échoue), upsert avec saut des lignes inchangées (dirty hash), puis réconciliation des retraits. Le paquet ne touche jamais à une base de données — implémentez `ListingRepository` contre votre propre schéma (Eloquent, PDO, WordPress…) :
+
+```php
+use Yeevy\CentrisPasserelle\Sync\ListingsSynchronizer;
+
+$synchronizer = new ListingsSynchronizer(
+    repository: $monRepository,   // implémente Contracts\ListingRepository
+    events: $dispatcherPsr14,     // optionnel — ListingCreated / ListingUpdated / ListingRemoved
+);
+
+$result = $synchronizer->sync('/chemin/vers/instantane'); // dossier ou fichier
+// $result->created, $result->updated, $result->skipped, $result->removed
+```
+
+Pour récupérer l'instantané depuis le compte FTP Passerelle, utilisez `FlysystemFeedSource` (installez `league/flysystem` et `league/flysystem-ftp` ou `-sftp-v3`) :
+
+```php
+use Yeevy\CentrisPasserelle\Feed\FlysystemFeedSource;
+
+$source = new FlysystemFeedSource($filesystem, localDirectory: '/tmp/centris');
+
+$result = $synchronizer->sync($source);
+```
+
 ### Feuille de route
 
-- Récupération FTP/SFTP (Flysystem) et pipeline de synchronisation complet
-- Réconciliation des retraits par différence d'instantanés
-- Enveloppe Laravel : `yeevy/laravel-centris` (dépôt séparé)
+- Extraction d'archives (pour les ententes livrant un ZIP)
+- Aides au téléchargement des photos (dédoublonnage par hachage)
+- Enveloppe Laravel : [`yeevy/laravel-centris`](https://github.com/yeevy-ai/laravel-centris)
 
 ### Gestion des versions
 
@@ -306,11 +332,37 @@ new SnapshotValidator($columns, checks: [
 | `VE` (vendue) | Mark sold |
 | Absent from snapshot | Unpublish (reconciliation step) |
 
+### Synchronization
+
+The engine applies a full snapshot to your storage: drift validation first (nothing is written if it fails), upserts with unchanged-row skipping (dirty hash), then removal reconciliation. The package never touches a database — implement `ListingRepository` against your own schema (Eloquent, PDO, WordPress…):
+
+```php
+use Yeevy\CentrisPasserelle\Sync\ListingsSynchronizer;
+
+$synchronizer = new ListingsSynchronizer(
+    repository: $myRepository,    // implements Contracts\ListingRepository
+    events: $psr14Dispatcher,     // optional — ListingCreated / ListingUpdated / ListingRemoved
+);
+
+$result = $synchronizer->sync('/path/to/snapshot'); // directory or file
+// $result->created, $result->updated, $result->skipped, $result->removed
+```
+
+To fetch the snapshot from the Passerelle FTP account, use `FlysystemFeedSource` (install `league/flysystem` plus `league/flysystem-ftp` or `-sftp-v3`):
+
+```php
+use Yeevy\CentrisPasserelle\Feed\FlysystemFeedSource;
+
+$source = new FlysystemFeedSource($filesystem, localDirectory: '/tmp/centris');
+
+$result = $synchronizer->sync($source);
+```
+
 ### Roadmap
 
-- FTP/SFTP fetching (Flysystem) and full sync pipeline
-- Removal reconciliation by snapshot diffing
-- Laravel wrapper: `yeevy/laravel-centris` (separate repo)
+- Archive extraction (for agreements delivering a ZIP)
+- Photo download helpers (hash dedupe)
+- Laravel wrapper: [`yeevy/laravel-centris`](https://github.com/yeevy-ai/laravel-centris)
 
 ### Versioning
 
