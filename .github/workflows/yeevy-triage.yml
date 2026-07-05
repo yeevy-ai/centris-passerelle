@@ -1,0 +1,64 @@
+name: Yeevy issue triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+  id-token: write
+
+jobs:
+  triage:
+    # Don't triage issues the maintainers open themselves
+    if: github.event.issue.user.login != 'oleghmelevschi' && !endsWith(github.event.issue.user.login, '[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ca-central-1
+
+      - name: Triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
+          use_bedrock: "true"
+          prompt: |
+            Triage issue #${{ github.event.issue.number }} in ${{ github.repository }}.
+
+            1. Read it with `gh issue view ${{ github.event.issue.number }}`.
+            2. Apply fitting labels with `gh issue edit ${{ github.event.issue.number }} --add-label ...`
+               (bug / enhancement / question; check `gh label list` for what exists).
+            3. PRIORITY: if the issue contains what looks like REAL Centris feed data
+               (real MLS numbers, civic addresses, broker names/emails/phones, feed rows)
+               or FTP credentials, immediately post a comment asking the author to edit
+               and replace them with synthetic values (point to tests/fixtures/synthetic/),
+               and apply a "needs-redaction" label (create it if missing).
+            4. If the bug form is missing essentials (package version, PHP version), post
+               ONE short comment asking for them. Otherwise, comment only if you can add
+               real value: a likely cause, a workaround, or a pointer to the relevant
+               README section (column overrides, drift validation, profiles).
+            5. Reply in the issue's language — French or English.
+
+            Be concise. Never include real feed data in your own comments. Do not close
+            issues; a human maintainer decides that.
+          claude_args: |
+            --model us.anthropic.claude-sonnet-4-6
+            --allowedTools "Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh label list:*),Bash(gh label create:*)"
