@@ -170,11 +170,34 @@ $source = new FlysystemFeedSource($filesystem, localDirectory: '/tmp/centris');
 $result = $synchronizer->sync($source);
 ```
 
+Si votre entente livre l'instantané en archive ZIP, décorez la source — l'extraction se fait sur place (requiert `ext-zip`) :
+
+```php
+use Yeevy\CentrisPasserelle\Feed\ZipExtractingSource;
+
+$result = $synchronizer->sync(new ZipExtractingSource($source));
+```
+
+### Téléchargement des photos
+
+`PhotoDownloader` télécharge les photos via n'importe quel client PSR-18 (p. ex. Guzzle) dans des fichiers adressés par contenu (`{sha256}.jpg`) — les octets identiques ne sont stockés qu'une seule fois :
+
+```php
+use Yeevy\CentrisPasserelle\Photo\PhotoDownloader;
+
+$downloader = new PhotoDownloader($clientPsr18, $requestFactory, '/chemin/vers/photos');
+
+foreach ($downloader->downloadAll($photosParser->parseFile('/chemin/vers/PHOTOS.TXT')) as $photo) {
+    $photo->path;             // /chemin/vers/photos/{sha256}.jpg
+    $photo->wasDeduplicated;  // true si les octets existaient déjà
+}
+```
+
+`download()` lève `PhotoDownloadFailed` ; `downloadAll()` journalise et ignore les échecs pour qu'une URL brisée n'interrompe jamais le lot. La conversion WebP reste une préoccupation de l'application consommatrice.
+
 ### Feuille de route
 
-- Extraction d'archives (pour les ententes livrant un ZIP)
-- Aides au téléchargement des photos (dédoublonnage par hachage)
-- Enveloppe Laravel : [`yeevy/laravel-centris`](https://github.com/yeevy-ai/laravel-centris)
+- Enveloppe Laravel : [`yeevy/laravel-centris`](https://github.com/yeevy-ai/laravel-centris) — commande `centris:sync`, événements Laravel, jobs de photos en file d'attente à venir
 
 ### Gestion des versions
 
@@ -358,11 +381,34 @@ $source = new FlysystemFeedSource($filesystem, localDirectory: '/tmp/centris');
 $result = $synchronizer->sync($source);
 ```
 
+If your agreement delivers the snapshot as a ZIP archive, decorate the source — extraction happens in place (requires `ext-zip`):
+
+```php
+use Yeevy\CentrisPasserelle\Feed\ZipExtractingSource;
+
+$result = $synchronizer->sync(new ZipExtractingSource($source));
+```
+
+### Photo downloads
+
+`PhotoDownloader` fetches photos through any PSR-18 client (e.g. Guzzle) into content-addressed files (`{sha256}.jpg`) — identical bytes are stored exactly once:
+
+```php
+use Yeevy\CentrisPasserelle\Photo\PhotoDownloader;
+
+$downloader = new PhotoDownloader($psr18Client, $requestFactory, '/path/to/photos');
+
+foreach ($downloader->downloadAll($photosParser->parseFile('/path/to/PHOTOS.TXT')) as $photo) {
+    $photo->path;             // /path/to/photos/{sha256}.jpg
+    $photo->wasDeduplicated;  // true when the bytes already existed
+}
+```
+
+`download()` throws `PhotoDownloadFailed`; `downloadAll()` logs and skips failures so one broken URL never aborts the batch. WebP conversion stays a consumer-application concern.
+
 ### Roadmap
 
-- Archive extraction (for agreements delivering a ZIP)
-- Photo download helpers (hash dedupe)
-- Laravel wrapper: [`yeevy/laravel-centris`](https://github.com/yeevy-ai/laravel-centris)
+- Laravel wrapper: [`yeevy/laravel-centris`](https://github.com/yeevy-ai/laravel-centris) — `centris:sync` command, Laravel events, queued photo jobs upcoming
 
 ### Versioning
 
