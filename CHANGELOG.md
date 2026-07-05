@@ -2,6 +2,12 @@
 
 All notable changes to `yeevy/centris-passerelle` will be documented in this file.
 
+## v0.3.1 - 2026-07-05
+
+Housekeeping release — no code changes.
+
+The v0.3.0 tag was briefly re-pointed during a rebase and Packagist had already indexed the original reference; per Packagist's version-immutability policy, v0.3.0 has been restored to its published commit and this tag carries the current mainline (identical code, changelog file up to date). Install `^0.3` as usual.
+
 ## v0.3.0 — Archive extraction and photo downloads - 2026-07-05
 
 ### Highlights
