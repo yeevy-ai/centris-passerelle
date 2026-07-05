@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a defect in yeevy/centris-passerelle
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **⚠️ Never paste real feed data.** Rows from your Passerelle files contain confidential listing data — replace every value with synthetic ones (see `tests/fixtures/synthetic/`) before posting. The same goes for FTP credentials.
+
+        *Les rapports en français sont les bienvenus.*
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      placeholder: v0.3.1
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: "8.3"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - INSCRIPTIONS parser (listings)
+        - REMARQUES / ADDENDA parsers
+        - PHOTOS parser / PhotoDownloader
+        - Reference-file parsers (MEMBRES, FIRMES, BUREAUX)
+        - Detail-file parsers (CARACTERISTIQUES, DEPENSES, PIECES_UNITES, …)
+        - ColumnMap / profiles / overrides
+        - SnapshotValidator (drift detection)
+        - Sync engine (ListingsSynchronizer)
+        - Feed sources (FTP, ZIP extraction)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: overrides
+    attributes:
+      label: Column map profile / overrides in use
+      description: Positions vary by agreement version — paste your overrides array if you use one.
+      render: php
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Expected vs. actual behavior. If a specific row triggers it, include a SYNTHETIC reproduction of that row.
+    validations:
+      required: true

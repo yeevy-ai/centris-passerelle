@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & setup help
+    url: https://github.com/yeevy-ai/centris-passerelle/discussions
+    about: Agreement versions, column positions, general usage — ask in Discussions.
+  - name: Commercial support & integrations (Yeevy)
+    url: https://yeevy.ai
+    about: Need this wired into your brokerage site? Talk to us.
+  - name: Report a security vulnerability
+    url: https://github.com/yeevy-ai/centris-passerelle/security/advisories/new
+    about: Report privately via a security advisory — never in a public issue.
