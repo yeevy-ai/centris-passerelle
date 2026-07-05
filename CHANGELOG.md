@@ -2,6 +2,19 @@
 
 All notable changes to `yeevy/centris-passerelle` will be documented in this file.
 
+## v0.3.0 — Archive extraction and photo downloads - 2026-07-05
+
+### Highlights
+
+- **`ZipExtractor` + `ZipExtractingSource`** — for diffusion agreements delivering the drop as a ZIP: extracts the archive's .TXT entries flattened (guarding against zip-slip paths) and composes as a `FeedSource` decorator, so archived drops flow through `ListingsSynchronizer` exactly like plain ones. Requires `ext-zip` (suggest-only).
+- **`PhotoDownloader`** — downloads listing photos through any PSR-18 client into content-addressed files (`{sha256}.{ext}`), so identical bytes — re-drops, co-listings sharing media — are stored exactly once. `download()` throws `PhotoDownloadFailed`; `downloadAll()` logs and skips failures so one broken URL never aborts the batch. Extension derived from the response content type.
+
+### New dependencies
+
+PSR HTTP interfaces only: `psr/http-client`, `psr/http-factory`, `psr/http-message`. Bring any PSR-18 client (e.g. Guzzle — suggest-only).
+
+No breaking changes — all v0.2.0 APIs are untouched.
+
 ## v0.2.0 — Sync engine - 2026-07-05
 
 ### Highlights
