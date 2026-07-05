@@ -24,12 +24,20 @@
         "php": "^8.2",
         "ext-mbstring": "*",
         "league/csv": "^9.27",
+        "psr/event-dispatcher": "^1.0",
         "psr/log": "^2.0 || ^3.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
+        "league/flysystem": "^3.0",
+        "league/flysystem-memory": "^3.0",
         "pestphp/pest": "^3.0 || ^4.0",
         "phpstan/phpstan": "^2.1"
+    },
+    "suggest": {
+        "league/flysystem": "Required to use FlysystemFeedSource (^3.0).",
+        "league/flysystem-ftp": "FTP adapter for fetching the Passerelle drop with FlysystemFeedSource.",
+        "league/flysystem-sftp-v3": "SFTP adapter for fetching the Passerelle drop with FlysystemFeedSource."
     },
     "autoload": {
         "psr-4": {
