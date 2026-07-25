@@ -36,7 +36,7 @@ jobs:
           aws-region: ca-central-1
 
       - name: Triage
-        uses: anthropics/claude-code-action@v1.0.176
+        uses: anthropics/claude-code-action@v1.0.182
         with:
           github_token: ${{ steps.app-token.outputs.token }}
           use_bedrock: "true"
